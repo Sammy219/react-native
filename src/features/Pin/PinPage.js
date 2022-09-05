@@ -27,22 +27,24 @@ const PinPage = ({visible, onPress}) => {
         {id: '8'},
         {id: '9'},
         {id: '0'},
-        {id: 'C'},
-
     ];
 
     useEffect(()=>{
-        numbers = numbers.sort(()=>Math.random()-0.5)
-        setRenderNum(numbers)
+        let number = numbers.sort(()=>Math.random()-0.5)
+        number.push({id: '<'})
+        setRenderNum(number)
     }, [])
 
     let contentStyle = {
-        flex: 1, justifyContent: 'space-around', alignSelf: 'center'
+        flex: 1,
+        justifyContent: 'space-between',
+        alignSelf: 'center',
+        display: 'flex',
     }
     
     const renderNumItem = ({item}) => {
         return <NumItem product={item} onPress={()=>{
-            item.id !== 'C' ? setPin(pin + item.id) : setPin('')
+            item.id !== '<' && pin.length <= 6 ? setPin(pin + item.id) : setPin(pin.slice(0, -1))
         }}/>
     }
 
@@ -55,44 +57,18 @@ const PinPage = ({visible, onPress}) => {
         }
     }, [route.params]);
     return(
-        // <View style={styles.mainContainer}>
-        //     <Modal
-        //         visible={visible}
-        //         animationType='slide'
-        //         transparent={true}
-        //     >
-        //         <View style={styles.modalContainer}>
-        //         <TouchableOpacity onPress={onPress}>
-        //             <Entypo name="back" size={24} color="black" />
-        //         </TouchableOpacity>
-        //             <View style={{alignItems: 'center'}}>
-        //                 <View style={{width: '50%'}}>
-                        // <Text style={[theme.text.subtitle, {textAlign: 'center'}]}>Please Input PIN{'\n'} (User Id: 123)</Text> 
-                        // </View>
-                        // <TextInput secureTextEntry style={{
-                        //     borderBottomColor: theme.color.foreground,
-                        //     borderBottomWidth: 1,
-                        //     marginVertical: theme.spacing.l,
-                        //     fontSize: 32,
-                        //     textAlign: 'center',
-                        // }} value={pin} onChangeText={setPin} placeholder="        " keyboardType="number"></TextInput>
-        //                 <FormButton onClick={onPress} label={'Submit'}/>
-        //             </View>
-        //         </View>
-        //     </Modal>
-        // </View>     
         <MainContainer>
             <View style={styles.pinContainer}>
                 <View style={styles.pinView}>
                     <Text style={[theme.text.subtitle, styles.pinLabel]}>Please Input PIN{'\n'} (User Id: 123)</Text> 
-                    <TextInput secureTextEntry style={styles.pinInput} value={pin} onChangeText={setPin} keyboardType="numeric" maxLength={6}></TextInput>
+                    <TextInput  style={styles.pinInput} value={pin} onChangeText={setPin} keyboardType="numeric" maxLength={6}></TextInput>
                 </View>
             </View>
             <FormButton label={'Submit'} onClick={()=>{
                 navigation.navigate(pinParam.prevPage, {
                     message: 'OK'
                 })
-                console.log("SUBMITED");
+                // console.log("SUBMITED");
                 // navigation.reset({
                 //     index: 0,
                 //     route: [{
