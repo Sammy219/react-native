@@ -45,6 +45,51 @@ const styling = (theme) => StyleSheet.create({
     },
     text: {
         fontSize: theme.spacing.l,
+    },
+    circleButton: {
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        borderColor: theme.color.foreground,
+        borderWidth: 2,
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: theme.spacing.s,
     }
 })
+
+export const PinButton = ({text, onPress}) => {
+    const theme = useTheme();
+    const styles = styling(theme);
+    const handlerButtonPress = () => {
+        if (text !== '<'){
+            onPress(prevState => {
+                if (prevState.length < 6){
+                    return prevState + text;
+                } else return prevState
+            })
+        } else {
+            onPress(prevState => prevState.slice(0, -1))
+        }
+    }
+    const renderButton = () => {
+        if (text !== '-1') {
+            return(
+                <TouchableOpacity onPress={handlerButtonPress}>
+                    <View style={styles.circleButton}>
+                        <Text style={theme.text.title}>{text}</Text>
+                    </View>
+                </TouchableOpacity>
+            )
+        } else {
+            return <View style={{width: 80}}></View>
+        }
+    }
+    return(
+        <>
+            {renderButton()}
+        </>
+    )
+}
+
 export default NumItem

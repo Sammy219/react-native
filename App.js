@@ -8,13 +8,17 @@ import ProductList from './src/features/product/ProductList';
 import WelcomePage from './src/features/Welcome/WelcomePage';
 import AppRouter from './src/navigation/AppRouter';
 import { serviceFactory } from './src/services/ServiceFactory';
+import { apiClientFactory } from './src/shared/ApiClientFactory';
+import { clientInstance } from './src/shared/AxiosClient';
+import { AuthProvider } from './src/shared/context/AuthContext';
 import { DependencyProvider } from './src/shared/context/DependencyContext';
 import { ThemeProvider } from './src/shared/context/ThemeContext';
 import useAppFont from './src/shared/hook/UseAppFont';
 
 export default function App() {
   const fonts = useAppFont();
-  const services = serviceFactory();
+  const apiClient = apiClientFactory(clientInstance)
+  const services = serviceFactory(apiClient);
   if (!fonts){
     return null;
   }
@@ -23,7 +27,9 @@ export default function App() {
       <SafeAreaProvider>
         <ThemeProvider>
           <NavigationContainer>
+            <AuthProvider>
             <AppRouter/>
+            </AuthProvider>
           </NavigationContainer>
         </ThemeProvider>
       </SafeAreaProvider>
@@ -32,3 +38,8 @@ export default function App() {
 }
 
 
+// WIFI YC
+// BASE_URL=http://192.168.18.89:3001 npm start
+
+// WIFI PABU
+// BASE_URL=http://192.168.43.111:3001 npm start

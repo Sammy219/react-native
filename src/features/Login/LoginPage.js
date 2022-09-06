@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { ImageBackground, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { ImageBackground, Keyboard, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import MainContainer from "../../shared/components/MainContainer"
 import { Entypo } from '@expo/vector-icons'; 
 import FormInput from "../../shared/components/FormInput";
@@ -7,14 +7,39 @@ import FormPassword from "../../shared/components/FormPassword";
 import FormButton from "../../shared/components/FormButton";
 import { useNavigation } from "@react-navigation/native";
 import { ROUTE } from "../../shared/hook/constant";
+import useViewState from "../../shared/hook/UseViewState";
+import { useDeps } from "../../shared/hook/UseDependency";
+import Spinner from "../../shared/components/Spinner";
+import SnackBar from "../../shared/components/SnackBar";
+import { useAuth } from "../../shared/hook/UseAuth";
 
 
 const LoginPage = () => {
     const navigation = useNavigation();
     const [userName, onChangeUserName] = useState('');
     const [password, onChangePassword] = useState('');
+    const {viewState, setLoading, setError} = useViewState();
+    const {loginService} = useDeps();
+    const {onLogin} = useAuth();
+
+    const onAuthenticate = async () => {
+        Keyboard.dismiss();
+        setLoading();
+        try {
+            const response = await onLogin({userName: userName, password: password})
+            console.log('Response Login',response);
+            if (response) {
+                navigation.replace(ROUTE.HOME)
+            } else {
+                setError(new Error('Unauthorized'));
+            }
+        } catch (error) {
+            setError(error)
+        }
+    }
     return(
         <MainContainer>
+            {viewState.isLoading && <Spinner text='Sabar Cuk!'/>}
             <ImageBackground source={require('../../../assets/img/paperbg.jpg')} resizeMode="cover" style={styles.background}>
                 <View style={styles.header}>
                     <Text style={styles.title}>Welcome !</Text>
@@ -29,8 +54,10 @@ const LoginPage = () => {
                         value={password}
                         onChangeValue={onChangePassword}
                         placeholder='Input Your Password'/>
-                    <FormButton label='Login' onClick={()=>{navigation.replace(ROUTE.HOME)}}/>
+                    {/* <FormButton label='Login' onClick={()=>{navigation.replace(ROUTE.HOME)}}/> */}
+                    <FormButton label='Login' onClick={onAuthenticate}/>
                 </View>
+                {viewState.error !== null && <SnackBar message='Unauthorized'/>}
             </ImageBackground>
         </MainContainer>
     )

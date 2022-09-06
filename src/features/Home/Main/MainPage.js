@@ -12,6 +12,7 @@ import { ROUTE } from "../../../shared/hook/constant"
 import FormButton from "../../../shared/components/FormButton"
 import { useEffect, useState } from "react"
 import ModalDialog from "../../../shared/components/ModalDialog"
+import { useAuth } from "../../../shared/hook/UseAuth"
 
 
 const MainPage = () => {
@@ -19,6 +20,7 @@ const MainPage = () => {
     const styles = styling(theme);
     const navigation = useNavigation();
     const [modalVisible, setModalVisible] = useState(false);
+    const {onLogout} = useAuth();
     // const [pinVisible, setPinVisible] = useState(false);
     const route = useRoute();
     useEffect(()=>{
@@ -26,6 +28,11 @@ const MainPage = () => {
             console.log('Message', route.params.message);
         }
     }, [route.params]);
+
+    const handlerLogout = async (route) => {
+        await onLogout();
+        navigation.replace(route);
+    }
 
     return(
         <MainContainer>
@@ -44,14 +51,16 @@ const MainPage = () => {
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.menuContainer}>
-                                <TouchableOpacity style={styles.touchAble} onPress={()=>setModalVisible(false)}>
+                                <TouchableOpacity style={styles.touchAble} onPress={()=>navigation.navigate('Menu1')}>
                                     <FontAwesome name="user-plus" size={24} color={theme.color.primary}/>
                                     <Text style={styles.text}>Customer{'\n'} Registration</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.menuContainer}>
                                 <TouchableOpacity style={styles.touchAble} onPress={()=>navigation.navigate(ROUTE.PIN, {
-                                    prevPage: ROUTE.MAIN
+                                    userId: '123',
+                                    // prevPage: ROUTE.MAIN
+                                    prevPage: route.name
                                 })}>
                                     <FontAwesome name="money" size={24} color={theme.color.primary}/>
                                     <Text style={styles.text}>Bill{'\n'} Payment</Text>
@@ -68,7 +77,9 @@ const MainPage = () => {
                         </View>
                         <HeaderPageLabel text={"PROFILE"}/>
                         <View style={{marginHorizontal: theme.spacing.s}}>
-                            <FormButton label={'Logout'} onClick={() => {navigation.replace(ROUTE.LOGIN)}}/>
+                            <FormButton label={'Logout'} onClick={() => {
+                                handlerLogout(ROUTE.LOGIN)
+                                }}/>
                         </View>
                     </View>
                 </ScrollView>

@@ -25,7 +25,7 @@ const ProductList = () => {
     const onGetAllProduct = async () => {
         setIsFetching(true);
         try {
-            const response = await productService.getAllProduct(page);
+            const response = await productService.getAllProduct(page, 20);
             if (page === 1) {
                 setProducts([
                         ...response
